@@ -1,19 +1,9 @@
-import requests
-import re
-import jsbeautifier
-import urllib.request
-from urllib.parse import urljoin
-from bs4 import BeautifulSoup as bs
-from requests_html import HTMLSession
-
 ------------------------ change user agent ---------------------------
+import re
+from requests_html import HTMLSession
+import random
 
 randomint = random.randint(0,7)
-
-# User_Agents
-# This helps skirt a bit around servers that detect repeaded requests from the same machine.
-# This will not prevent your IP from getting banned but will help a bit by pretending to be different browsers
-# and operating systems.
 user_agents = [
     'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',
     'Opera/9.25 (Windows NT 5.1; U; en)',
@@ -24,15 +14,41 @@ user_agents = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:8.0.1) Gecko/20100101 Firefox/8.0.1',
     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.151 Safari/535.19'
 ]
-
 hdr = { 'User-Agent' : user_agents[randomint] }
+
+or 
+# to select from file
+lines = open("user_agents.txt").read().splitlines()
+user_agent =  random.choice(lines)
+hdr = {"User-Agent": user_agent }
+
 
 url = input("Enter URL: ")
 session = HTMLSession()
 # Use the object above to connect to needed webpage
 resp = session.get(url, timeout=4, headers=hdr)
 
------------------------ request_html lib to load dynamic content ----------------------
+###########################################################################################################################
+----------------------- request lib or js beautifier/ javascript beautifier----------------------
+import beautify 
+import requests
+
+url = input("Enter URL: ")
+response = requests.get(url,headers=headers)
+soup = str(bs(response.text, "html.parser"))
+print(beautify.js_beautify(soup))
+
+for i in soup.head.contents:
+    print(i)
+for i in soup.find_all('script'):
+    print (i.get('src'))
+
+###########################################################################################################################
+----------------------- request_html lib to load dynamic web content ----------------------
+from bs4 import BeautifulSoup as bs
+from requests_html import HTMLSession
+from urllib.parse import urljoin
+
 
 def get_session():
     url = input("Enter URL: ")
@@ -65,7 +81,8 @@ script_files = []
 OR 
 
 import requests
- 
+from bs4 import BeautifulSoup as bs
+
 url = '<a href="http://some-domain.com/set/cookies/headers">http://some-domain.com/set/cookies/headers</a>'
  
 headers = {'user-agent': 'your-own-user-agent/0.0.1'}
@@ -73,22 +90,12 @@ cookies = {'visit-month': 'February'}
  
 req = requests.get(url, headers=headers, cookies=cookies)
 
------------------------ request lib ----------------------
-url = input("Enter URL: ")
-response = requests.get(url,headers=headers)
-soup = str(bs(response.text, "html.parser"))
-print(soup.prettify())
 
-for i in soup.head.contents:
-	print(i)
-for i in soup.find_all('script'):
-	print (i.get('src'))
-
-
-
----------------------- url lib request ---------------------
-
-response = urllib.urlopen(url)
+###########################################################################################################################
+---------------------- urllib ---------------------
+import re
+import urllib
+response = urllib.request.urlopen(url)
 html = response.read()
 text = html.decode()
 links = re.findall('"((http|ftp)s?://.*?).js"', text)
@@ -96,7 +103,7 @@ for link in links:
 	print(link)
 
 
-
+###########################################################################################################################
 ------------------------ file write utf-8 with codecs -----------------
 import codecs
 #import io
@@ -105,27 +112,31 @@ with codecs.open(folder+"/external_js_links.txt", "w","utf-8") as f:
 	    for js_link in script_files:
 	        print(js_link, file=f)
 	return len(script_files)
+
+###########################################################################################################################
 ------------------------------ file write utf-8 error ------------------------------
 
 import codecs
 #import io
 folder = input("Enter Folder name: ")
 with codecs.open(folder+"/external_js_links.txt", "w",encoding= 'unicode_escape') as f:
-        for js_link in script_files:
-            print(js_link, file=f)
+    for js_link in script_files:
+        print(js_link, file=f)
     return len(script_files)
-
+###########################################################################################################################
 ----------------------------- file read / open  ------------------------------------
 
 with codecs.open(folder+"/external_js_links.txt", "r", "utf-8") as f:
-        js_links = f.readlines()
+    js_links = f.readlines()
 
 js_links = [link.strip('\n') for link in js_links]
 
-------------------------- FIle Unique lines/ remove duplicates ------------------------
+###########################################################################################################################
+------------------------- File Unique lines/ remove duplicate lines ------------------------
 
 uniqlines = set(open('/tmp/foo').readlines())
 
+###########################################################################################################################
 ------------------------- Create directory if not found ------------------------
 import os
 folder = input("Enter Folder name: ")
@@ -133,14 +144,15 @@ folder = input("Enter Folder name: ")
 if not os.path.exists(folder):
     os.mkdir(folder)
 
-
------------------------- Convert LIST elements to string ------------------------
+###########################################################################################################################
+------------------------ Convert LIST to string ------------------------
 STRING = "".join(str(x) for x in LISTA)
 
 or 
 
 STRING  = ''.join(listA)
 
+###########################################################################################################################
 -------------------------Find all Substrings from string -------------------------
 
 
@@ -161,7 +173,7 @@ print(open_scripts)
 print(closed_scripts)
 
 
-
+###########################################################################################################################
 ------------------------- compare two list items -------------------------------
 >>> a = [1, 2, 3, 4, 5]                                                                                                                                                 
 >>> b = [11, 2, 3, 4, 5] 
@@ -170,8 +182,8 @@ ans : 1
 [j for i, j in zip(a, b) if i != j] 
 ans : 11  
 
-
----------------------------------------- Use SET OPERATIONS ----------------------------------
+###########################################################################################################################
+---------------------------------------- Use SET OPERATIONS for comparing two files via hash values ----------------------------------
 
 previous_hash_list = [1 , 2 , 3 , 4, 5]
 new_hash_list =      [1 , 5, 2 , 4, 7]
@@ -180,7 +192,7 @@ new_hash_list =      [1 , 5, 2 , 4, 7]
 if (len(previous_hash_list) == len(new_hash_list)):
     k = [j for i, j in zip(previous_hash_list, new_hash_list) if i != j]
 else:
-    print("May be new javascript file is introduced or previous js removed")
+    print("May be new file is introduced or previous file removed")
     k = list(set(new_hash_list) - set(previous_hash_list))
 
 print(k)
@@ -192,26 +204,26 @@ for item in k:
 # print(k)
 print (changed_hash_index)
 
-
+###########################################################################################################################
 -------------------------- print colored text ----------------------------
 from colorama import init 
 from termcolor import colored 
 init()
 print(colored('Hello, World!', 'green', 'on_red')) 
 
-
---------------------------- Display centered text  ---------------------------
+###########################################################################################################################
+--------------------------- Display text in center  ---------------------------
 import shutil
 center_point = shutil.get_terminal_size().columns   #screen center point
 
 print("HELLO".center(center_point))
 
-
---------------------------- GET FILE NAME FROM URL ---------------------------
+###########################################################################################################################
+--------------------------- GET FILE NAME FROM URL name ---------------------------
 def get_filename(url):
     return url.rsplit('/', 1)[1]
 
-
+###########################################################################################################################
 --------------------------- esc key infinite loop interrupt ---------------------
 import msvcrt
 
@@ -238,6 +250,8 @@ With the following, you can discover the codes for the special keys:
         break
         
 Use getche() if you want the key pressed be echoed."""
+
+###########################################################################################################################
 ---------------------------- global and local variable --------------------------------
 
 x = "global "
@@ -251,7 +265,7 @@ def foo():
 
 foo()
 
-
+###########################################################################################################################
 -------------------------- Convert string to hash value ----------------------------
 import hashlib
 def toHash(soup):
@@ -259,7 +273,7 @@ def toHash(soup):
     return hash
 
 
-
+###########################################################################################################################
 -------------------------- string replace ---------------------------------------
 
 txt = "I like bananas"
@@ -269,23 +283,7 @@ x = txt.replace("bananas", "apples")
 print(x)
 
 
-
--------------------------- js beautifier / javascript beautifier  api -------------------
-
-import urllib.parse
-import urllib.request
-
-def js_beautify(script):
-    #st = input("ENTER SRING: ")
-    # print()
-    # print(st)
-    js_string = script;
-    params = urllib.parse.urlencode({'apikey': 'EV4NiW9AFFSbqdwlqgbSvPuinro7NR4bw8yee8otNHVEu', 'js': js_string}).encode("utf-8")
-    beautiful = urllib.request.urlopen("https://api.dotmaui.com/client/1.0/jsbeautify/", data = params).read().decode("utf-8")
-
-    return beautiful
-
-
+###########################################################################################################################
 ------------------------- print exception -----------------------------------------
 except Exception as e: print(e)
 
@@ -327,7 +325,7 @@ except Exception:
     errors = HandleException(sys.exc_info())
     errors.create_log()
 
-    
+
 ------------------------- File input dialogue box -------------------------------
 import tkinter as tk
 from tkinter import filedialog
