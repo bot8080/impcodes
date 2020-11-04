@@ -282,9 +282,21 @@ x = txt.replace("bananas", "apples")
 
 print(x)
 
+###########################################################################################################################
+------------------------------ Create LOGS --------------------------------
+def create_log(folder):
+    # temp_url = url.rsplit('.')
+    # temp_url = temp_url[len(temp_url) - 2]
+    f = folder+ "/" +  "exception_logs.txt"
+    log = open(f, "a")
+    log.seek(0)
+    return log
+
+log = create_log(folder)
+print("################", file=log)
 
 ###########################################################################################################################
-------------------------- print exception -----------------------------------------
+------------------------- print handle exception -----------------------------------------
 except Exception as e: print(e)
 
 except Exception:
@@ -300,9 +312,9 @@ while error == 1:
         traceback.print_exc()
         print("Something")
 
+or 
+
 import sys
-
-
 class HandleException(): 
     def __init__(self,error_info):
         self.exception_type, self.exception_object, self.exception_traceback = error_info
@@ -325,7 +337,7 @@ except Exception:
     errors = HandleException(sys.exc_info())
     errors.create_log()
 
-
+###########################################################################################################################
 ------------------------- File input dialogue box -------------------------------
 import tkinter as tk
 from tkinter import filedialog
@@ -336,18 +348,7 @@ file_path = filedialog.askopenfilename()
 file1 = open(file_path, 'r')
 
 
------------------------------- Create LOGS --------------------------------
-def create_log(folder):
-    # temp_url = url.rsplit('.')
-    # temp_url = temp_url[len(temp_url) - 2]
-    f = folder+ "/" +  "exception_logs.txt"
-    log = open(f, "a")
-    log.seek(0)
-    return log
-
-log = create_log(folder)
-print("################", file=log)
-
+###########################################################################################################################
 ------------------------------- Empty file contents ----------------------------------
 
 def empty_file(folder, file):
