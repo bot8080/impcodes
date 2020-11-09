@@ -325,10 +325,13 @@ class HandleException():
         f = "exception_logs.txt"
         log = open(f, "a+")
         log.seek(0)
+        print(datetime.now(), file = log)
         print("#######################",file = log)
-        print("Exception type: ", self.exception_type,file = log)
         print("File name: ", self.filename,file = log)
         print("Line number: ", self.line_number,file = log)
+        print("Exception_object: ", self.exception_object,file = log)
+        print("Exception type: ", self.exception_type,file = log)
+        print("exception_traceback: ", self.exception_traceback,file = log)
         print("#######################\n",file = log)
 
 try:
@@ -349,7 +352,7 @@ file1 = open(file_path, 'r')
 
 
 ###########################################################################################################################
-------------------------------- Empty file contents ----------------------------------
+------------------------------- Empty file contents / clear file data ----------------------------------
 
 def empty_file(folder, file):
     if os.path.exists(folder+"/"+file):
@@ -363,3 +366,36 @@ def empty_file(folder, file):
             pass
     else:
         return 
+
+
+###########################################################################################################################
+------------------------------- Schedule jobs with threading ----------------------------------
+
+import threading
+import time
+import schedule
+
+
+def job():
+    print("I'm running on thread %s" % threading.current_thread())
+
+def do_this():
+    print("Second function")
+
+def do_this_also():
+    print("THIRD function")
+
+def run_threaded(job_func):
+    job_thread = threading.Thread(target=job_func)
+    job_thread.start()
+
+
+j = schedule.every(10).seconds.do(run_threaded, job)
+i = schedule.every(1).seconds.do(run_threaded, do_this)
+k = schedule.every(1).seconds.do(run_threaded, do_this_also)
+
+
+while 1:
+    schedule.run_pending()
+    time.sleep(1)
+    # schedule.cancel_job(i)
