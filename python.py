@@ -1,7 +1,16 @@
------------------------- change user agent ---------------------------
+------------------------ change user agent and proxies ---------------------------
 import re
 from requests_html import HTMLSession
 import random
+
+http_proxy  = "http://10.10.1.10:3128"
+https_proxy = "https://10.10.1.11:1080"
+ftp_proxy   = "ftp://10.10.1.10:3128"
+proxyDict = { 
+              "http"  : http_proxy, 
+              "https" : https_proxy, 
+              "ftp"   : ftp_proxy
+            }
 
 randomint = random.randint(0,7)
 user_agents = [
@@ -22,14 +31,14 @@ lines = open("user_agents.txt").read().splitlines()
 user_agent =  random.choice(lines)
 hdr = {"User-Agent": user_agent }
 
-
 url = input("Enter URL: ")
 session = HTMLSession()
 # Use the object above to connect to needed webpage
-resp = session.get(url, timeout=4, headers=hdr)
+resp = session.get(url, timeout=4, headers=hdr, proxies=proxyDict)
+
 
 ###########################################################################################################################
------------------------ request lib or js beautifier/ javascript beautifier----------------------
+----------------------- GET request lib or js beautifier/ javascript beautifier----------------------
 import beautify 
 import requests
 
@@ -42,6 +51,31 @@ for i in soup.head.contents:
     print(i)
 for i in soup.find_all('script'):
     print (i.get('src'))
+###########################################################################################################################
+----------------------- POST request lib or login with session ----------------------
+import requests
+
+url1 = 'https://www.instagram.com/accounts/login/ajax/'
+url2 = 'https://www.instagram.com/mahi7781/?__a=1'
+headers = {
+    'Host': 'www.instagram.com',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/82.0',
+    'Accept': '*/*',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate',
+    'X-CSRFToken': 'TtBi7Lna3459mvAyraE58DNsn8Ow90ER',
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'X-Requested-With': 'XMLHttpRequest',
+    'Content-Length': '280',
+    'Origin': 'https://www.instagram.com'
+}
+
+uname = ""
+data = 'username='+uname+'&enc_password=%23PWD_INSTAGRAM_BROWSER%3A10%3A1606290843%3AASRQAFzDLjqZ8m8%2FrXEOhbhtG0FkCvPCKlLJG8bIKAHwfUpkn2MN9cTgNy7pIuMqO5K3BXNzgie7LCYw0zEB3U8rx6SP%2B8TgiOm2gzr0VvG2smIVOJwyzHpGS0pdwJ9pJS9Fch%2ByAeU%2Ba6wPrdY5dIo%3D'
+s = requests.Session()
+s.post(url1, headers = headers, data = data)
+x = s.get(url2)
+print(x.text)
 
 ###########################################################################################################################
 ----------------------- request_html lib to load dynamic web content ----------------------
@@ -49,15 +83,11 @@ from bs4 import BeautifulSoup as bs
 from requests_html import HTMLSession
 from urllib.parse import urljoin
 
-
 def get_session():
     url = input("Enter URL: ")
     session = HTMLSession()
-    
-    resp = session.get(url, timeout=4, proxies=proxies) #these parametrs can be removed if proxies not required 
-     
+    resp = session.get(url, timeout=4, proxies=proxies) #these parametrs can be removed if proxies not required  
     resp.html.render()
-
     soup = bs(resp.html.html, "lxml")
     print(soup.prettify())
     return soup
@@ -68,7 +98,6 @@ for i in soup.find_all('script'):
 	print (i.get('src'))
 
 script_files = []
-
     if script.attrs.get("src"):
         # if the tag has the attribute 'src'
         script_url = urljoin(url, script.attrs.get("src"))
